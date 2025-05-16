@@ -1,3 +1,4 @@
+import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
@@ -15,7 +16,7 @@ class _SplashState extends State<Splash> {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Splash()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     });
   }
@@ -25,34 +26,39 @@ class _SplashState extends State<Splash> {
     final Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: size.height * 0.15,
-              ),
-              const Text(
-                'App logo',
-                style: TextStyle(fontSize: 24),
-              ),
-              SizedBox(
-                height: size.height * 0.1,
-              ),
-              Image.asset("assets/images/Loader.png"),
-              const Center(
-                child: Text(
-                  'Wait a second ',
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: size.height * 0.17,
+                ),
+                const Text(
+                  'App logo',
                   style: TextStyle(fontSize: 24),
                 ),
+                SizedBox(
+                  height: size.height * 0.1,
+                ),
+                Image.asset("assets/images/Loader.png"),
+                const SizedBox(height: 24),
+                const Center(
+                  child: Text(
+                    'Wait a second ',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                "assets/images/Group 5245.png",
+                width: size.width,
+                fit: BoxFit.cover,
               ),
-              Positioned(
-                right: 0,
-                left: 0,
-                bottom: 0,
-                child: Image.asset("assets/images/Group 5245.png"),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
