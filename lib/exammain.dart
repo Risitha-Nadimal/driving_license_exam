@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/languageselction.dart';
 import 'package:flutter/material.dart';
 
 class MockExamScreen extends StatelessWidget {
@@ -156,7 +157,13 @@ class MockExamScreen extends StatelessWidget {
                       description:
                           'Covers traffic signs, road rules, and basic driving regulations.',
                       onPressed: () {
-                        // Start Exam 1 logic
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const LanguageSelectionScreen(),
+                          ),
+                        );
                       },
                     ),
                     const SizedBox(height: 10),
