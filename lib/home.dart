@@ -1,5 +1,42 @@
 import 'package:flutter/material.dart';
 
+// Create placeholder screens for each tab (you should replace these with your actual screens)
+class StudyScreen extends StatelessWidget {
+  const StudyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Study Screen Content'));
+  }
+}
+
+class ExamScreen extends StatelessWidget {
+  const ExamScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Exam Screen Content'));
+  }
+}
+
+class PremiumScreen extends StatelessWidget {
+  const PremiumScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Premium Screen Content'));
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Profile Screen Content'));
+  }
+}
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -10,10 +47,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
 
+  // List of screens to display for each tab
+  final List<Widget> _screens = [
+    const HomeContent(), // This will be your original home content
+    const StudyScreen(),
+    const ExamScreen(),
+    const PremiumScreen(),
+    const ProfileScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -34,8 +79,22 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: _screens[_currentIndex], // Display the current screen
+    );
+  }
+}
+
+// Extract your original home content into a separate widget
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,14 +105,14 @@ class _HomeState extends State<Home> {
             const Text(
               "Malithi Imasha",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: size.height * 0.016),
             // Banner image
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(15),
               child: Image.asset(
                 'assets/images/home.png', // Replace with your image asset
                 height: size.height * 0.25,
@@ -61,7 +120,7 @@ class _HomeState extends State<Home> {
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: size.height * 0.016),
             // Subscription card
             Container(
               decoration: BoxDecoration(
@@ -76,10 +135,10 @@ class _HomeState extends State<Home> {
                 ],
               ),
               padding: const EdgeInsets.all(16),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.circle, color: Colors.green, size: 10),
                       SizedBox(width: 6),
@@ -89,23 +148,47 @@ class _HomeState extends State<Home> {
                           style: TextStyle(color: Colors.grey)),
                     ],
                   ),
-                  SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text("Subscription expires in",
-                            style: TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    height: 60, // Set width to 60
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white,
+                          Color(0xFFBDE0FE), // BDE0FE
+                          // FFFFFF
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
-                      Text(
-                        "25 days",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    // color: Colors.grey.shade200,
+                    child: const Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text("Subscription expires in",
+                                  style: TextStyle(color: Colors.grey)),
+                            ),
+                            SizedBox(height: 0.4),
+                            Text(
+                              "25 days",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Color(0xFF219EBC),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Spacer(),
-                      Icon(Icons.info_outline, color: Colors.blue),
-                    ],
+                        Spacer(),
+                        Icon(Icons.punch_clock_outlined, color: Colors.blue),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -146,7 +229,7 @@ class _HomeState extends State<Home> {
                   LinearProgressIndicator(
                     value: 0.68,
                     backgroundColor: Colors.grey.shade300,
-                    color: Colors.teal,
+                    color: const Color(0xFF219EBC),
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -205,14 +288,31 @@ class _HomeState extends State<Home> {
           color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.teal, size: 28),
-            const SizedBox(height: 6),
-            Text(percent, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(subtext,
-                style: const TextStyle(fontSize: 12, color: Colors.black54)),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: const Color(0xff219EBC), size: 28),
+                  const SizedBox(width: 12),
+                  Text(label, style: const TextStyle(fontSize: 15)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Text(percent,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
+                  const SizedBox(width: 6),
+                  Text(subtext,
+                      style:
+                          const TextStyle(fontSize: 12, color: Colors.black54)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -226,7 +326,7 @@ class _HomeState extends State<Home> {
       child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.teal.shade400,
+          color: const Color(0xFF219EBC),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
