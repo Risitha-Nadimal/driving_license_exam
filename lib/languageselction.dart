@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/backbutton.dart';
+import 'package:driving_license_exam/mockexam.dart';
 import 'package:flutter/material.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
@@ -89,7 +90,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     // Start Exam Button
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to exam screen with selectedLanguage
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MockExamDo(),
+                          ),
+                        );
                         print("Starting exam in $selectedLanguage");
                       },
                       style: ElevatedButton.styleFrom(

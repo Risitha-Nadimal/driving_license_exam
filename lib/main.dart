@@ -1,4 +1,4 @@
-import 'package:driving_license_exam/home.dart';
+import 'package:driving_license_exam/study_course.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: StudyCourseScreen(
+        size: size,
+      ),
     );
   }
 }
