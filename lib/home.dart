@@ -1,3 +1,4 @@
+import 'package:driving_license_exam/exammain.dart';
 import 'package:driving_license_exam/previous_result_study.dart';
 import 'package:driving_license_exam/profile.dart';
 import 'package:flutter/material.dart';
@@ -9,15 +10,6 @@ class StudyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('Study Screen Content'));
-  }
-}
-
-class ExamScreen extends StatelessWidget {
-  const ExamScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Exam Screen Content'));
   }
 }
 
@@ -44,7 +36,7 @@ class _HomeState extends State<Home> {
   final List<Widget> _screens = [
     const HomeContent(), // This will be your original home content
     const StudyScreen(),
-    const ExamScreen(),
+    const MockExamScreen(),
     const PremiumScreen(),
     const ProfileScreen(),
   ];

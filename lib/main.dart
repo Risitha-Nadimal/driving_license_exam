@@ -1,4 +1,4 @@
-import 'package:driving_license_exam/screen/login/signup/splash/splash.dart';
+import 'package:driving_license_exam/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Splash(),
+      home: const Home(),
     );
   }
 }
