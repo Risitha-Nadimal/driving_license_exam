@@ -1,3 +1,5 @@
+import 'package:driving_license_exam/previous_result_study.dart';
+import 'package:driving_license_exam/profile.dart';
 import 'package:flutter/material.dart';
 
 // Create placeholder screens for each tab (you should replace these with your actual screens)
@@ -25,15 +27,6 @@ class PremiumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('Premium Screen Content'));
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Profile Screen Content'));
   }
 }
 
@@ -238,11 +231,25 @@ class HomeContent extends StatelessWidget {
                     children: [
                       _progressCard(
                           icon: Icons.menu_book,
+                          ontap: () => {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PreviousResultStudy()))
+                              },
                           label: "Study",
                           percent: "75%",
                           subtext: "complete"),
                       const SizedBox(width: 12),
                       _progressCard(
+                          ontap: () => {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PreviousResultStudy()))
+                              },
                           icon: Icons.check_circle_outline,
                           label: "Tests",
                           percent: "62%",
@@ -279,39 +286,43 @@ class HomeContent extends StatelessWidget {
   Widget _progressCard(
       {required IconData icon,
       required String label,
+      required VoidCallback ontap,
       required String percent,
       required String subtext}) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Icon(icon, color: const Color(0xff219EBC), size: 28),
-                  const SizedBox(width: 12),
-                  Text(label, style: const TextStyle(fontSize: 15)),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Text(percent,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20)),
-                  const SizedBox(width: 6),
-                  Text(subtext,
-                      style:
-                          const TextStyle(fontSize: 12, color: Colors.black54)),
-                ],
-              ),
-            ],
+      child: InkWell(
+        onTap: ontap,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, color: const Color(0xff219EBC), size: 28),
+                    const SizedBox(width: 12),
+                    Text(label, style: const TextStyle(fontSize: 15)),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Text(percent,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20)),
+                    const SizedBox(width: 6),
+                    Text(subtext,
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black54)),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
