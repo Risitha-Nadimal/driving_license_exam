@@ -33,23 +33,26 @@ class NextButton extends StatelessWidget {
               )
             ],
           ),
-          child: TextButton.icon(
-            onPressed: onPressed,
-            icon: Text(
-              isLastQuestion ? 'Finish' : 'Next',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.white, // White text
+          child: Center(
+            child: TextButton.icon(
+              onPressed: onPressed,
+              icon: Text(
+                isLastQuestion ? 'Finish' : 'Next',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white, // White text
+                ),
               ),
-            ),
-            label: const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.white, // White icon
-            ),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              // No need for foregroundColor since we set text/icon colors directly
+              label: Icon(
+                isLastQuestion ? Icons.done_all : Icons.arrow_forward_ios,
+                color: Colors.white, // White icon
+              ),
+              style: TextButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                // No need for foregroundColor since we set text/icon colors directly
+              ),
             ),
           ),
         ),
