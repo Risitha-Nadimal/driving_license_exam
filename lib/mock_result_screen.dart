@@ -1,5 +1,6 @@
 import 'package:driving_license_exam/component/appbar.dart';
 import 'package:driving_license_exam/component/reviewbutton.dart';
+import 'package:driving_license_exam/home.dart';
 import 'package:flutter/material.dart';
 
 class MockResultScreen extends StatelessWidget {
@@ -109,7 +110,11 @@ class MockResultScreen extends StatelessWidget {
                 ),
                 CustomButton(
                   onPressed: () {
-                    // Navigate to home
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Home(),
+                        ));
                   },
                   text: 'Home',
                   backgroundColor: const Color(0xff4378DB),

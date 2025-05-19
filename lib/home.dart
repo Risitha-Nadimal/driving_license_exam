@@ -251,7 +251,11 @@ class HomeContent extends StatelessWidget {
               "Study Materials",
               Icons.menu_book,
               onTap: () {
-                // Handle study materials navigation
+                final homeState = context.findAncestorStateOfType<_HomeState>();
+                // ignore: invalid_use_of_protected_member
+                homeState?.setState(() {
+                  homeState._currentIndex = 1; // Assuming Study is at index 1
+                });
               },
             ),
             const SizedBox(height: 12),
@@ -260,7 +264,11 @@ class HomeContent extends StatelessWidget {
               "Mock Exams",
               Icons.assignment_turned_in,
               onTap: () {
-                // Handle mock exams navigation
+                final homeState = context.findAncestorStateOfType<_HomeState>();
+                // ignore: invalid_use_of_protected_member
+                homeState?.setState(() {
+                  homeState._currentIndex = 2; // Assuming Study is at index 1
+                });
               },
             ),
           ],
