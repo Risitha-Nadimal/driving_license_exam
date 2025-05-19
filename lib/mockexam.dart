@@ -4,7 +4,11 @@ import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
 
 class MockExamDo extends StatefulWidget {
-  const MockExamDo({super.key});
+  final String selectedLanguage;
+  const MockExamDo({
+    super.key,
+    required this.selectedLanguage,
+  });
 
   @override
   State<MockExamDo> createState() => _MockExamDoState();
@@ -12,16 +16,234 @@ class MockExamDo extends StatefulWidget {
 
 class _MockExamDoState extends State<MockExamDo> {
   int selectedAnswer = -1;
+  int currentQuestionIndex = 0;
+  List<int> userAnswers = [];
+  late List<Map<String, dynamic>> questions;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeQuestions();
+    userAnswers = List.filled(questions.length, -1);
+  }
+
+  void _initializeQuestions() {
+    questions = [
+      // English questions
+      if (widget.selectedLanguage == 'English') ...[
+        {
+          'question': 'What does this traffic sign indicate?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            'Curve to right',
+            'Joining a side road at right angles to the right',
+            'Stop sign ahead',
+            'Slippery road',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question':
+              'What should you do when approaching a red traffic light?',
+          'image': 'assets/images/redligt.jpg',
+          'answers': [
+            'Speed up to cross quickly',
+            'Come to a complete stop',
+            'Slow down but continue moving',
+            'Ignore if no vehicles are coming',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question':
+              'What is the speed limit in urban areas unless otherwise posted?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            '40 km/h',
+            '50 km/h',
+            '60 km/h',
+            '70 km/h',
+          ],
+          'correctAnswer': 1,
+        },
+      ],
+      // Sinhala questions
+      if (widget.selectedLanguage == 'Sinhala') ...[
+        {
+          'question': 'මෙම ගමනාගමන සංඥාවෙන් දැක්වෙන්නේ කුමක්ද?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            'දකුණට වක්‍රය',
+            'දකුණට සෘජු කෝණවලින් පැත්තක මාර්ගයට එකතු වීම',
+            'ඉදිරියේ නවත්වන සංඥාව',
+            'ස්ලිප්පි මාර්ගය',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question': 'රතු ගමනාගමන ආලෝකයකට ආසන්න වූ විට ඔබ කළ යුත්තේ කුමක්ද?',
+          'image': 'assets/images/redligt.jpg',
+          'answers': [
+            'වේගයෙන් ඉක්මවා යාමට වේගය ඉහළ නංවන්න',
+            'සම්පූර්ණයෙන් නවතින්න',
+            'මන්දගාමී වන නමුත් ගමන් කරන්න',
+            'වාහන එනවා නොමැති නම් නොසලකා හරින්න',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question':
+              'වෙනත් ලෙස නියම කර නොමැති නම් නාගරික ප්‍රදේශවල වේග සීමාව කොපමණද?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            'පැයට කි.මී. 40',
+            'පැයට කි.මී. 50',
+            'පැයට කි.මී. 60',
+            'පැයට කි.මී. 70',
+          ],
+          'correctAnswer': 1,
+        },
+      ],
+      // Tamil questions
+      if (widget.selectedLanguage == 'Tamil') ...[
+        {
+          'question': 'இந்த போக்குவரத்து அடையாளம் எதைக் குறிக்கிறது?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            'வலதுபுறம் வளைவு',
+            'வலதுபுறம் செங்கோணங்களில் ஒரு பக்க சாலையில் சேர்தல்',
+            'முன்னே நிறுத்தும் அடையாளம்',
+            'வழுக்கல் சாலை',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question':
+              'சிவப்பு போக்குவரத்து விளக்கை நெருங்கும்போது நீங்கள் என்ன செய்ய வேண்டும்?',
+          'image': 'assets/images/redligt.jpg',
+          'answers': [
+            'விரைவாக கடக்க வேகத்தை அதிகரிக்கவும்',
+            'முழுமையாக நிறுத்தவும்',
+            'மெதுவாக ஆனால் தொடர்ந்து நகரவும்',
+            'வாகனங்கள் வரவில்லை என்றால் புறக்கணிக்கவும்',
+          ],
+          'correctAnswer': 1,
+        },
+        {
+          'question':
+              'வேறுவிதமாக குறிப்பிடப்படாவிட்டால் நகர்ப்புற பகுதிகளில் வேக வரம்பு என்ன?',
+          'image': 'assets/images/exam.png',
+          'answers': [
+            'மணிக்கு 40 கி.மீ',
+            'மணிக்கு 50 கி.மீ',
+            'மணிக்கு 60 கி.மீ',
+            'மணிக்கு 70 கி.மீ',
+          ],
+          'correctAnswer': 1,
+        },
+      ],
+    ];
+  }
+
+  void _goToNextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+      setState(() {
+        userAnswers[currentQuestionIndex] = selectedAnswer;
+        currentQuestionIndex++;
+        selectedAnswer = userAnswers[currentQuestionIndex];
+      });
+    } else {
+      // Show confirmation dialog for the last question
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Column(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/alert_exam.png'),
+                  height: 100,
+                ),
+                SizedBox(height: 26),
+                Text("Attempt all answer"),
+              ],
+            ),
+            content:
+                const Text("Are you sure you want to submit your answers?"),
+            actions: [
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFF4378DB),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: TextButton(
+                        child: const Text(
+                          "Submit",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                          // Calculate results
+                          int correctAnswers = 0;
+                          for (int i = 0; i < questions.length; i++) {
+                            if (userAnswers[i] ==
+                                questions[i]['correctAnswer']) {
+                              correctAnswers++;
+                            }
+                          }
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MockResultScreen(
+                                totalQuestions: questions.length,
+                                correctAnswers: correctAnswers,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    TextButton(
+                      child: const Text("Cancel",
+                          style: TextStyle(
+                              color: Color(0xFF4378DB),
+                              fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void _goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setState(() {
+        userAnswers[currentQuestionIndex] = selectedAnswer;
+        currentQuestionIndex--;
+        selectedAnswer = userAnswers[currentQuestionIndex];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final answers = [
-      "Curve to right",
-      "Joining a side road at right angles to the right",
-      "Stop sign ahead",
-      "Slippery road",
-    ];
+    final currentQuestion = questions[currentQuestionIndex];
+    final isLastQuestion = currentQuestionIndex == questions.length - 1;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C1A64),
@@ -31,16 +253,16 @@ class _MockExamDoState extends State<MockExamDo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Timer & Progress
               Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                //
-                child: const Column(
+                child: Column(
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.access_time,
                             color: Colors.white70, size: 18),
@@ -55,24 +277,26 @@ class _MockExamDoState extends State<MockExamDo> {
                                 fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    SizedBox(height: 8),
-                    Text("Question 22/50",
-                        style: TextStyle(
+                    const SizedBox(height: 8),
+                    Text(
+                        "Question ${currentQuestionIndex + 1}/${questions.length}",
+                        style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0), fontSize: 16)),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     LinearProgressIndicator(
-                      value: 22 / 50,
+                      value: (currentQuestionIndex + 1) / questions.length,
                       minHeight: 8,
-                      backgroundColor: Color.fromARGB(60, 1, 1, 1),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.lightBlueAccent),
+                      backgroundColor: const Color.fromARGB(60, 1, 1, 1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.lightBlueAccent),
                     ),
                   ],
                 ),
               ),
-              // Timer & Progress
 
               const SizedBox(height: 24),
+
+              // Question & Image
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
@@ -82,19 +306,20 @@ class _MockExamDoState extends State<MockExamDo> {
                 ),
                 child: Column(
                   children: [
-                    const Align(
+                    Align(
                       alignment: Alignment.topLeft,
-                      child: Text("What does this traffic sign indicate?",
-                          style: TextStyle(
+                      child: Text(currentQuestion['question'],
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16)),
                     ),
                     const SizedBox(height: 16),
-                    Center(
-                      child: Image.asset(
-                        'assets/images/exam.png', // Add your traffic sign image in assets
-                        height: 100,
+                    if (currentQuestion['image'] != null)
+                      Center(
+                        child: Image.asset(
+                          currentQuestion['image'],
+                          height: 100,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 16),
                     const Align(
                       alignment: Alignment.topLeft,
@@ -106,74 +331,57 @@ class _MockExamDoState extends State<MockExamDo> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 24),
-              // Question & Image
-              Container(
-                padding: const EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0C1A64),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Column(
-                        children: [
-                          ...List.generate(answers.length, (index) {
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: selectedAnswer == index
-                                      ? Colors.blue
-                                      : Colors.grey.shade300,
-                                ),
-                                color: selectedAnswer == index
-                                    ? Colors.blue.shade50
-                                    : Colors.white,
-                              ),
-                              child: RadioListTile<int>(
-                                value: index,
-                                groupValue: selectedAnswer,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedAnswer = value!;
-                                  });
-                                },
-                                title: Text(answers[index]),
-                                activeColor: Colors.blue,
-                              ),
-                            );
-                          }),
-                        ],
+
+              // Answers
+              Expanded(
+                child: ListView.builder(
+                  itemCount: currentQuestion['answers'].length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: selectedAnswer == index
+                              ? Colors.blue
+                              : Colors.grey.shade300,
+                        ),
+                        color: selectedAnswer == index
+                            ? Colors.blue.shade50
+                            : Colors.white,
                       ),
-                    )
-                  ],
+                      child: RadioListTile<int>(
+                        value: index,
+                        groupValue: selectedAnswer,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedAnswer = value!;
+                          });
+                        },
+                        title: Text(currentQuestion['answers'][index]),
+                        activeColor: Colors.blue,
+                      ),
+                    );
+                  },
                 ),
               ),
-              const Spacer(),
+
               // Navigation buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const PreviousButton(),
+                  PreviousButton(
+                    onPressed:
+                        currentQuestionIndex > 0 ? _goToPreviousQuestion : null,
+                  ),
                   NextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const MockResultScreen(
-                            totalQuestions: 50,
-                            correctAnswers: 36,
-                          ),
-                        ),
-                      );
-                    },
-                  )
+                    onPressed: selectedAnswer != -1 ? _goToNextQuestion : null,
+                    isLastQuestion: isLastQuestion,
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),

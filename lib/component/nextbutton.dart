@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 class NextButton extends StatelessWidget {
   final VoidCallback? onPressed;
-  final String buttonText;
+  //final String buttonText;
   final double widthPercentage;
+  final bool isLastQuestion;
 
   const NextButton({
     super.key,
     this.onPressed,
-    this.buttonText = "Next",
+    // this.buttonText = "Next",
     this.widthPercentage = 0.3,
+    required this.isLastQuestion,
   });
 
   @override
@@ -34,7 +36,7 @@ class NextButton extends StatelessWidget {
           child: TextButton.icon(
             onPressed: onPressed,
             icon: Text(
-              buttonText,
+              isLastQuestion ? 'Finish' : 'Next',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,

@@ -97,7 +97,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MockExamDo(),
+                            builder: (context) => MockExamDo(
+                              selectedLanguage: selectedLanguage,
+                            ),
                           ),
                         );
                         print("Starting exam in $selectedLanguage");
