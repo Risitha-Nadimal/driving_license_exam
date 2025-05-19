@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/payment.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         "Progress tracking",
         "Renewal alerts"
       ],
-      "button": "Renew Plan"
+      "button": "Select Plan"
     },
     {
       "duration": "1 Year Plan",
@@ -196,6 +197,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: Card(
+                  color: isSelected
+                      ? const Color.fromARGB(255, 247, 251, 253)
+                      : Colors.grey.shade50,
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
                       color: isSelected ? Colors.blue : Colors.transparent,
@@ -210,13 +214,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(plan["duration"],
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_month,
+                              color: Color(0xff219EBC),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(plan["duration"],
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                         const SizedBox(height: 6),
                         Text(plan["price"],
                             style: const TextStyle(
-                                fontSize: 16, color: Colors.green)),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Color.fromARGB(255, 0, 0, 0))),
                         const SizedBox(height: 10),
                         ...plan["features"].map<Widget>((feature) => Row(
                               children: [
@@ -228,9 +243,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             )),
                         const SizedBox(height: 12),
                         SizedBox(
+                            height: size.height * 0.05,
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                                 backgroundColor: isSelected
                                     ? const Color(0xff219EBC)
                                     : const Color(0xffD7ECFE),
@@ -239,8 +258,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 setState(() {
                                   selectedPlanIndex = index;
                                 });
+                                isSelected
+                                    ? Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const PaymentScreen(),
+                                        ),
+                                      )
+                                    : null;
                               },
-                              child: Text(plan["button"],
+                              child: Text(
+                                  isSelected ? "Renew Plan" : plan["button"],
                                   style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
