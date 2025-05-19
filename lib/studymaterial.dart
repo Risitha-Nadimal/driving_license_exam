@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/study_course.dart';
 import 'package:flutter/material.dart';
 
 class StudyMaterialsScreen extends StatelessWidget {
@@ -155,7 +156,15 @@ class StudyMaterialsScreen extends StatelessWidget {
                   final category = categories[index];
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to lesson list
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StudyCourseScreen(
+                              size: size,
+                              categoryTitle: category['title'] as String,
+                              // Pass any other required parameters here
+                            ),
+                          ));
                     },
                     child: Container(
                       decoration: BoxDecoration(

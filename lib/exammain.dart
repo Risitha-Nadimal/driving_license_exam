@@ -160,8 +160,9 @@ class MockExamScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const LanguageSelectionScreen(),
+                            builder: (context) => const LanguageSelectionScreen(
+                              buttonColor: Color(0xff4378DB),
+                            ),
                           ),
                         );
                       },

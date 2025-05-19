@@ -1,7 +1,11 @@
+import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/component/backbutton.dart';
+import 'package:driving_license_exam/languageselction.dart';
 import 'package:flutter/material.dart';
 
 class StudyCourseScreen extends StatelessWidget {
   final Size size;
+  final String categoryTitle; // Add this parameter
   final List<Map<String, String>> lessons = [
     {
       "image": "assets/images/dead_end.png",
@@ -35,7 +39,12 @@ class StudyCourseScreen extends StatelessWidget {
     },
   ];
 
-  StudyCourseScreen({super.key, required this.size});
+  // Update constructor to include categoryTitle
+  StudyCourseScreen({
+    super.key,
+    required this.size,
+    required this.categoryTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +52,11 @@ class StudyCourseScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Custom AppBar
-          AppBar(
-            size: size,
-            bgcolor: const Color(0xff28A164),
-            textColor: Colors.white,
-            heading: 'STUDY COURSE',
-          ),
+          appbar(
+              size: size,
+              bgcolor: const Color(0xff28A164),
+              textColor: const Color.fromARGB(255, 255, 255, 255),
+              heading: categoryTitle), // Use categoryTitle here
 
           // Lesson List
           Expanded(
@@ -59,6 +66,7 @@ class StudyCourseScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final lesson = lessons[index];
                 return Card(
+                  color: Colors.white,
                   elevation: 3,
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
@@ -77,49 +85,21 @@ class StudyCourseScreen extends StatelessWidget {
                           fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
-                      // Handle tap action here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LanguageSelectionScreen(
+                            buttonColor: Color(0xff28A164),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 );
               },
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// Custom AppBar Widget
-class AppBar extends StatelessWidget {
-  final Size size;
-  final Color bgcolor;
-  final Color textColor;
-  final String heading;
-
-  const AppBar({
-    super.key,
-    required this.size,
-    required this.bgcolor,
-    required this.textColor,
-    required this.heading,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size.width,
-      height: 60,
-      color: bgcolor,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            heading,
-            style: TextStyle(
-                color: textColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+          backbutton(size: size)
         ],
       ),
     );

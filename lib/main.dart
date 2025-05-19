@@ -1,4 +1,4 @@
-import 'package:driving_license_exam/study_course.dart';
+import 'package:driving_license_exam/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,9 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StudyCourseScreen(
-        size: size,
-      ),
+      home: const Home(),
     );
   }
 }

@@ -3,7 +3,11 @@ import 'package:driving_license_exam/mockexam.dart';
 import 'package:flutter/material.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
-  const LanguageSelectionScreen({super.key});
+  final Color buttonColor;
+  const LanguageSelectionScreen({
+    super.key,
+    required this.buttonColor,
+  });
 
   @override
   State<LanguageSelectionScreen> createState() =>
@@ -99,7 +103,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                         print("Starting exam in $selectedLanguage");
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4378DB),
+                        backgroundColor: widget.buttonColor,
                         padding:
                             EdgeInsets.symmetric(vertical: size.height * 0.021),
                         minimumSize: const Size(double.infinity, 50),

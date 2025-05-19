@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/exammain.dart';
+import 'package:driving_license_exam/premium.dart';
 import 'package:driving_license_exam/previous_result_study.dart';
 import 'package:driving_license_exam/profile.dart';
 import 'package:driving_license_exam/studymaterial.dart';
@@ -30,7 +31,7 @@ class _HomeState extends State<Home> {
     const HomeContent(), // This will be your original home content
     const StudyMaterialsScreen(),
     const MockExamScreen(),
-    const PremiumScreen(),
+    const SubscriptionScreen(),
     const ProfileScreen(),
   ];
 
