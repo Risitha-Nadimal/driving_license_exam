@@ -1,5 +1,7 @@
 import 'package:driving_license_exam/component/appbar.dart';
 import 'package:driving_license_exam/editprofile.dart';
+import 'package:driving_license_exam/premium.dart';
+import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -169,7 +171,12 @@ class ProfileScreen extends StatelessWidget {
                             SizedBox(
                               width: size.width,
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return const SubscriptionScreen();
+                                  }));
+                                },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff219EBC)),
                                 child: const Text('Manage Subscription',
@@ -187,7 +194,30 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(
                       width: size.width,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Log out'),
+                            content:
+                                const Text('are you sure you want to log out?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'Cancel'),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                ),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
