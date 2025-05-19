@@ -1,9 +1,7 @@
-import 'package:audio_session/audio_session.dart';
 import 'package:driving_license_exam/component/PreviousButton.dart';
 import 'package:driving_license_exam/component/nextbutton.dart';
 import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 
 class MockExamDo extends StatefulWidget {
   final String selectedLanguage;
@@ -21,57 +19,12 @@ class _MockExamDoState extends State<MockExamDo> {
   int currentQuestionIndex = 0;
   List<int> userAnswers = [];
   late List<Map<String, dynamic>> questions;
-  late AudioPlayer _audioPlayer;
-  bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
-    _initAudioSession();
     _initializeQuestions();
     userAnswers = List.filled(questions.length, -1);
-  }
-
-  Future<void> _initAudioSession() async {
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration(
-      avAudioSessionCategory: AVAudioSessionCategory.playback,
-      avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.duckOthers,
-      avAudioSessionMode: AVAudioSessionMode.defaultMode,
-      avAudioSessionRouteSharingPolicy:
-          AVAudioSessionRouteSharingPolicy.defaultPolicy,
-      avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
-      androidAudioAttributes: AndroidAudioAttributes(
-        contentType: AndroidAudioContentType.speech,
-        flags: AndroidAudioFlags.none,
-        usage: AndroidAudioUsage.media,
-      ),
-      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-      androidWillPauseWhenDucked: true,
-    ));
-  }
-
-  Future<void> _playAudio(String audioPath) async {
-    try {
-      if (_isPlaying) {
-        await _audioPlayer.stop();
-        setState(() => _isPlaying = false);
-        return;
-      }
-
-      await _audioPlayer.setAsset(audioPath);
-      _audioPlayer.play();
-      setState(() => _isPlaying = true);
-
-      _audioPlayer.playerStateStream.listen((state) {
-        if (state.processingState == ProcessingState.completed) {
-          setState(() => _isPlaying = false);
-        }
-      });
-    } catch (e) {
-      debugPrint("Error playing audio: $e");
-    }
   }
 
   void _initializeQuestions() {
@@ -81,7 +34,6 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'What does this traffic sign indicate?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/audio/question1_en.mp3',
           'answers': [
             'Curve to right',
             'Joining a side road at right angles to the right',
@@ -94,7 +46,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'What should you do when approaching a red traffic light?',
           'image': 'assets/images/redligt.jpg',
-          'audio': 'assets/audio/question2_en.mp3',
           'answers': [
             'Speed up to cross quickly',
             'Come to a complete stop',
@@ -107,7 +58,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'What is the speed limit in urban areas unless otherwise posted?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/audio/question3_en.mp3',
           'answers': [
             '40 km/h',
             '50 km/h',
@@ -122,7 +72,6 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'මෙම ගමනාගමන සංඥාවෙන් දැක්වෙන්නේ කුමක්ද?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'දකුණට වක්‍රය',
             'දකුණට සෘජු කෝණවලින් පැත්තක මාර්ගයට එකතු වීම',
@@ -134,7 +83,6 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'රතු ගමනාගමන ආලෝකයකට ආසන්න වූ විට ඔබ කළ යුත්තේ කුමක්ද?',
           'image': 'assets/images/redligt.jpg',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'වේගයෙන් ඉක්මවා යාමට වේගය ඉහළ නංවන්න',
             'සම්පූර්ණයෙන් නවතින්න',
@@ -147,7 +95,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'වෙනත් ලෙස නියම කර නොමැති නම් නාගරික ප්‍රදේශවල වේග සීමාව කොපමණද?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'පැයට කි.මී. 40',
             'පැයට කි.මී. 50',
@@ -162,7 +109,6 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'இந்த போக்குவரத்து அடையாளம் எதைக் குறிக்கிறது?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'வலதுபுறம் வளைவு',
             'வலதுபுறம் செங்கோணங்களில் ஒரு பக்க சாலையில் சேர்தல்',
@@ -175,7 +121,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'சிவப்பு போக்குவரத்து விளக்கை நெருங்கும்போது நீங்கள் என்ன செய்ய வேண்டும்?',
           'image': 'assets/images/redligt.jpg',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'விரைவாக கடக்க வேகத்தை அதிகரிக்கவும்',
             'முழுமையாக நிறுத்தவும்',
@@ -188,7 +133,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'வேறுவிதமாக குறிப்பிடப்படாவிட்டால் நகர்ப்புற பகுதிகளில் வேக வரம்பு என்ன?',
           'image': 'assets/images/exam.png',
-          'audio': 'assets/images/Aluth kalawak.mp3',
           'answers': [
             'மணிக்கு 40 கி.மீ',
             'மணிக்கு 50 கி.மீ',
@@ -207,35 +151,80 @@ class _MockExamDoState extends State<MockExamDo> {
         userAnswers[currentQuestionIndex] = selectedAnswer;
         currentQuestionIndex++;
         selectedAnswer = userAnswers[currentQuestionIndex];
-        // Stop audio when changing questions
-        if (_isPlaying) {
-          _audioPlayer.stop();
-          _isPlaying = false;
-        }
       });
     } else {
-      // Stop audio when submitting
-      if (_isPlaying) {
-        _audioPlayer.stop();
-        _isPlaying = false;
-      }
+      // Show confirmation dialog for the last question
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Column(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/alert_exam.png'),
+                  height: 100,
+                ),
+                SizedBox(height: 26),
+                Text("Attempt all answer"),
+              ],
+            ),
+            content:
+                const Text("Are you sure you want to submit your answers?"),
+            actions: [
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFF4378DB),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: TextButton(
+                        child: const Text(
+                          "Submit",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                          // Calculate results
+                          int correctAnswers = 0;
+                          for (int i = 0; i < questions.length; i++) {
+                            if (userAnswers[i] ==
+                                questions[i]['correctAnswer']) {
+                              correctAnswers++;
+                            }
+                          }
 
-      // Calculate results
-      int correctAnswers = 0;
-      for (int i = 0; i < questions.length; i++) {
-        if (userAnswers[i] == questions[i]['correctAnswer']) {
-          correctAnswers++;
-        }
-      }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MockResultScreen(
-            totalQuestions: questions.length,
-            correctAnswers: correctAnswers,
-          ),
-        ),
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MockResultScreen(
+                                totalQuestions: questions.length,
+                                correctAnswers: correctAnswers,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    TextButton(
+                      child: const Text("Cancel",
+                          style: TextStyle(
+                              color: Color(0xFF4378DB),
+                              fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -246,19 +235,8 @@ class _MockExamDoState extends State<MockExamDo> {
         userAnswers[currentQuestionIndex] = selectedAnswer;
         currentQuestionIndex--;
         selectedAnswer = userAnswers[currentQuestionIndex];
-        // Stop audio when changing questions
-        if (_isPlaying) {
-          _audioPlayer.stop();
-          _isPlaying = false;
-        }
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
   }
 
   @override
@@ -300,10 +278,15 @@ class _MockExamDoState extends State<MockExamDo> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                        "Question ${currentQuestionIndex + 1}/${questions.length}",
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 16)),
+                    Row(
+                      children: [
+                        Text(
+                            "Question ${currentQuestionIndex + 1}/${questions.length}",
+                            style: const TextStyle(
+                                color: Color.fromARGB(255, 0, 0, 0),
+                                fontSize: 16)),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: (currentQuestionIndex + 1) / questions.length,
@@ -328,28 +311,21 @@ class _MockExamDoState extends State<MockExamDo> {
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(currentQuestion['question'],
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.volume_up_rounded)),
+                          ),
+                          Text(currentQuestion['question'],
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                        if (currentQuestion['audio'] != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: IconButton(
-                              onPressed: () {
-                                _playAudio(currentQuestion['audio']);
-                              },
-                              icon: Icon(
-                                _isPlaying ? Icons.volume_off : Icons.volume_up,
-                                color: _isPlaying ? Colors.blue : Colors.grey,
-                              ),
-                            ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     if (currentQuestion['image'] != null)
