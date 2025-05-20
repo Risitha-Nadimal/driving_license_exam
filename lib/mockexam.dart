@@ -4,10 +4,12 @@ import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
 
 class MockExamDo extends StatefulWidget {
+  final String source;
   final String selectedLanguage;
   const MockExamDo({
     super.key,
     required this.selectedLanguage,
+    required this.source,
   });
 
   @override
@@ -19,6 +21,7 @@ class _MockExamDoState extends State<MockExamDo> {
   int currentQuestionIndex = 0;
   List<int> userAnswers = [];
   late List<Map<String, dynamic>> questions;
+  bool showAnswer = false;
 
   @override
   void initState() {
@@ -146,86 +149,122 @@ class _MockExamDoState extends State<MockExamDo> {
   }
 
   void _goToNextQuestion() {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (widget.source == 'StudyMaterials') {
       setState(() {
-        userAnswers[currentQuestionIndex] = selectedAnswer;
-        currentQuestionIndex++;
-        selectedAnswer = userAnswers[currentQuestionIndex];
-      });
-    } else {
-      // Show confirmation dialog for the last question
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Column(
-              children: [
-                Image(
-                  image: AssetImage('assets/images/alert_exam.png'),
-                  height: 100,
-                ),
-                SizedBox(height: 26),
-                Text("Attempt all answer"),
-              ],
-            ),
-            content:
-                const Text("Are you sure you want to submit your answers?"),
-            actions: [
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xFF4378DB),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
-                      child: TextButton(
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                          // Calculate results
-                          int correctAnswers = 0;
-                          for (int i = 0; i < questions.length; i++) {
-                            if (userAnswers[i] ==
-                                questions[i]['correctAnswer']) {
-                              correctAnswers++;
-                            }
-                          }
-
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MockResultScreen(
-                                totalQuestions: questions.length,
-                                correctAnswers: correctAnswers,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    TextButton(
-                      child: const Text("Cancel",
-                          style: TextStyle(
-                              color: Color(0xFF4378DB),
-                              fontWeight: FontWeight.bold)),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                    ),
-                  ],
+        if (!showAnswer) {
+          // First click: Show the correct answer
+          showAnswer = true;
+        } else {
+          // Second click: Move to the next question
+          userAnswers[currentQuestionIndex] = selectedAnswer;
+          if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            selectedAnswer = userAnswers[currentQuestionIndex];
+            showAnswer = false; // Reset for the next question
+          } else {
+            // Handle the last question (you can add logic to end the study session)
+            showAnswer = false;
+            // Optionally navigate to a result screen or reset
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MockResultScreen(
+                  totalQuestions: questions.length,
+                  correctAnswers: userAnswers
+                      .asMap()
+                      .entries
+                      .where((entry) =>
+                          entry.value == questions[entry.key]['correctAnswer'])
+                      .length,
                 ),
               ),
-            ],
-          );
-        },
-      );
+            );
+          }
+        }
+      });
+    } else {
+      // Existing MockExam logic
+      if (currentQuestionIndex < questions.length - 1) {
+        setState(() {
+          userAnswers[currentQuestionIndex] = selectedAnswer;
+          currentQuestionIndex++;
+          selectedAnswer = userAnswers[currentQuestionIndex];
+        });
+      } else {
+        // Show confirmation dialog for the last question
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Column(
+                children: [
+                  Image(
+                    image: AssetImage('assets/images/alert_exam.png'),
+                    height: 100,
+                  ),
+                  SizedBox(height: 26),
+                  Text("Attempt all answer"),
+                ],
+              ),
+              content:
+                  const Text("Are you sure you want to submit your answers?"),
+              actions: [
+                Center(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xFF4378DB),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: TextButton(
+                          child: const Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close the dialog
+                            // Calculate results
+                            int correctAnswers = 0;
+                            for (int i = 0; i < questions.length; i++) {
+                              if (userAnswers[i] ==
+                                  questions[i]['correctAnswer']) {
+                                correctAnswers++;
+                              }
+                            }
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MockResultScreen(
+                                  totalQuestions: questions.length,
+                                  correctAnswers: correctAnswers,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      TextButton(
+                        child: const Text("Cancel",
+                            style: TextStyle(
+                                color: Color(0xFF4378DB),
+                                fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -354,6 +393,10 @@ class _MockExamDoState extends State<MockExamDo> {
                 child: ListView.builder(
                   itemCount: currentQuestion['answers'].length,
                   itemBuilder: (context, index) {
+                    bool isCorrect = index == currentQuestion['correctAnswer'];
+                    bool showIndicator =
+                        showAnswer && widget.source == 'StudyMaterials';
+
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
@@ -363,19 +406,40 @@ class _MockExamDoState extends State<MockExamDo> {
                               ? Colors.blue
                               : Colors.grey.shade300,
                         ),
-                        color: selectedAnswer == index
-                            ? Colors.blue.shade50
-                            : Colors.white,
+                        color: showIndicator && isCorrect
+                            ? Colors.green.shade50
+                            : showIndicator &&
+                                    selectedAnswer == index &&
+                                    !isCorrect
+                                ? Colors.red.shade50
+                                : selectedAnswer == index
+                                    ? Colors.blue.shade50
+                                    : Colors.white,
                       ),
                       child: RadioListTile<int>(
                         value: index,
                         groupValue: selectedAnswer,
                         onChanged: (value) {
-                          setState(() {
-                            selectedAnswer = value!;
-                          });
+                          if (!showAnswer ||
+                              widget.source != 'StudyMaterials') {
+                            setState(() {
+                              selectedAnswer = value!;
+                            });
+                          }
                         },
-                        title: Text(currentQuestion['answers'][index]),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(currentQuestion['answers'][index]),
+                            ),
+                            if (showIndicator)
+                              Icon(
+                                isCorrect ? Icons.check : Icons.close,
+                                color: isCorrect ? Colors.green : Colors.red,
+                              ),
+                          ],
+                        ),
                         activeColor: Colors.blue,
                       ),
                     );

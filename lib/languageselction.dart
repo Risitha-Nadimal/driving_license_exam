@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   final Color buttonColor;
+  final String source;
   const LanguageSelectionScreen({
     super.key,
     required this.buttonColor,
+    required this.source,
   });
 
   @override
@@ -99,10 +101,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                           MaterialPageRoute(
                             builder: (context) => MockExamDo(
                               selectedLanguage: selectedLanguage,
+                              source: widget.source,
                             ),
                           ),
                         );
-                        print("Starting exam in $selectedLanguage");
+                        print(
+                            "Starting exam in $selectedLanguage from ${widget.source}");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: widget.buttonColor,
