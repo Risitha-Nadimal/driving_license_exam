@@ -176,6 +176,9 @@ class _MockExamDoState extends State<MockExamDo> {
                       .where((entry) =>
                           entry.value == questions[entry.key]['correctAnswer'])
                       .length,
+                  source: widget.source,
+                  userAnswers: userAnswers,
+                  questions: questions,
                 ),
               ),
             );
@@ -242,6 +245,9 @@ class _MockExamDoState extends State<MockExamDo> {
                                 builder: (_) => MockResultScreen(
                                   totalQuestions: questions.length,
                                   correctAnswers: correctAnswers,
+                                  source: widget.source,
+                                  userAnswers: userAnswers, // Pass userAnswers
+                                  questions: questions,
                                 ),
                               ),
                             );

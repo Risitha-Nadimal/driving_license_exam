@@ -1,16 +1,23 @@
 import 'package:driving_license_exam/component/appbar.dart';
-import 'package:driving_license_exam/component/reviewbutton.dart';
+import 'package:driving_license_exam/component/reviewbutton.dart' as review_btn;
 import 'package:driving_license_exam/home.dart';
+import 'package:driving_license_exam/review.dart';
 import 'package:flutter/material.dart';
 
 class MockResultScreen extends StatelessWidget {
   final int totalQuestions;
   final int correctAnswers;
+  final String? source;
+  final List<int>? userAnswers; // Add userAnswers
+  final List<Map<String, dynamic>>? questions;
 
   const MockResultScreen({
     super.key,
     required this.totalQuestions,
     required this.correctAnswers,
+    this.source,
+    this.userAnswers,
+    this.questions,
   });
 
   @override
@@ -19,15 +26,27 @@ class MockResultScreen extends StatelessWidget {
     int wrongAnswers = totalQuestions - correctAnswers;
     bool isPassed = correctAnswers >= 35;
 
+    String heading;
+    Color bgcolor;
+    if (source == 'MockExam') {
+      heading = "Mock Exam \n Exam paper 01";
+      bgcolor = const Color(0xff4378DB);
+    } else {
+      heading =
+          "Result \n Paper 01"; // Default heading if source is null or unexpected
+      bgcolor = const Color(0xFF28A164);
+      heading = "Study Materials \n     Module 01"; // Default bgcolor
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
           appbar(
               size: size,
-              bgcolor: const Color(0xff4378DB),
+              bgcolor: bgcolor,
               textColor: Colors.white,
-              heading: "Mock Exam \n Exam paper 01"),
+              heading: heading),
           // Header
 
           const SizedBox(height: 24),
@@ -83,8 +102,8 @@ class MockResultScreen extends StatelessWidget {
                             const SizedBox(height: 8),
                             Text(
                               isPassed
-                                  ? "You Pass the Exam 🎉"
-                                  : "You are Fail the Exam",
+                                  ? "You Pass the ${source == 'MockExam' ? 'Mock Exam' : 'StudyMaterials'}"
+                                  : "You are Fail the ${source == 'MockExam' ? 'Mock Exam' : 'StudyMaterials'}",
                               style: const TextStyle(fontSize: 20),
                             ),
                           ],
@@ -102,13 +121,24 @@ class MockResultScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomButton(
+                review_btn.CustomButton(
                   onPressed: () {
-                    // Navigate to review
+                    if (userAnswers != null && questions != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReviewScreen(
+                            source: source ?? 'MockExam',
+                            userAnswers: userAnswers!,
+                            questions: questions!,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   text: 'Review',
                 ),
-                CustomButton(
+                review_btn.CustomButton(
                   onPressed: () {
                     Navigator.push(
                         context,
