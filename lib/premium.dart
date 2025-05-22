@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/payment.dart';
 import 'package:flutter/material.dart';
 
@@ -261,10 +262,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 isSelected
                                     ? Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const PaymentScreen(),
-                                        ),
+                                        createFadeRoute(const PaymentScreen()),
                                       )
                                     : null;
                               },

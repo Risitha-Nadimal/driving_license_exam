@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/component/reviewbutton.dart' as review_btn;
 import 'package:driving_license_exam/home.dart';
 import 'package:driving_license_exam/review.dart';
@@ -127,13 +128,11 @@ class MockResultScreen extends StatelessWidget {
                     if (userAnswers != null && questions != null) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => ReviewScreen(
-                            source: source ?? 'MockExam',
-                            userAnswers: userAnswers!,
-                            questions: questions!,
-                          ),
-                        ),
+                        createFadeRoute(ReviewScreen(
+                          source: source ?? 'MockExam',
+                          userAnswers: userAnswers!,
+                          questions: questions!,
+                        )),
                       );
                     }
                   },
@@ -141,11 +140,7 @@ class MockResultScreen extends StatelessWidget {
                 ),
                 review_btn.CustomButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Home(),
-                        ));
+                    Navigator.push(context, createFadeRoute(const Home()));
                   },
                   text: 'Home',
                   backgroundColor: const Color(0xff4378DB),

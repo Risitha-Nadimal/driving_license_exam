@@ -1,3 +1,4 @@
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/exammain.dart';
 import 'package:driving_license_exam/premium.dart';
 import 'package:driving_license_exam/previous_result_study.dart';
@@ -6,15 +7,6 @@ import 'package:driving_license_exam/studymaterial.dart';
 import 'package:flutter/material.dart';
 
 // Create placeholder screens for each tab (you should replace these with your actual screens)
-
-class PremiumScreen extends StatelessWidget {
-  const PremiumScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Premium Screen Content'));
-  }
-}
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -217,13 +209,10 @@ class HomeContent extends StatelessWidget {
                     children: [
                       _progressCard(
                           icon: Icons.menu_book,
-                          ontap: () => {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PreviousResultStudy()))
-                              },
+                          ontap: () => Navigator.push(
+                                context,
+                                createFadeRoute(const PreviousResultStudy()),
+                              ),
                           label: "Study",
                           percent: "75%",
                           subtext: "complete"),
@@ -231,10 +220,9 @@ class HomeContent extends StatelessWidget {
                       _progressCard(
                           ontap: () => {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PreviousResultStudy()))
+                                  context,
+                                  createFadeRoute(const PreviousResultStudy()),
+                                )
                               },
                           icon: Icons.check_circle_outline,
                           label: "Tests",

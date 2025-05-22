@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/languageselction.dart';
 import 'package:flutter/material.dart';
 
@@ -159,12 +160,10 @@ class MockExamScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const LanguageSelectionScreen(
-                              source: "MockExam",
-                              buttonColor: Color(0xff4378DB),
-                            ),
-                          ),
+                          createFadeRoute(const LanguageSelectionScreen(
+                            source: "MockExam",
+                            buttonColor: Color(0xff4378DB),
+                          )),
                         );
                       },
                     ),

@@ -1,5 +1,6 @@
 import 'package:driving_license_exam/component/appbar.dart';
 import 'package:driving_license_exam/component/backbutton.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/languageselction.dart';
 import 'package:flutter/material.dart';
 
@@ -87,12 +88,10 @@ class StudyCourseScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const LanguageSelectionScreen(
-                            source: "StudyMaterials",
-                            buttonColor: Color(0xff28A164),
-                          ),
-                        ),
+                        createFadeRoute(const LanguageSelectionScreen(
+                          source: "StudyMaterials",
+                          buttonColor: Color(0xff28A164),
+                        )),
                       );
                     },
                   ),

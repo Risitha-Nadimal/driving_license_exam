@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/PreviousButton.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/component/nextbutton.dart';
 import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
@@ -170,9 +171,8 @@ class _MockExamDoState extends State<MockExamDo> {
             } else {
               showAnswer = false;
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MockResultScreen(
+                  context,
+                  createFadeRoute(MockResultScreen(
                     totalQuestions: questions.length,
                     correctAnswers: userAnswers
                         .asMap()
@@ -184,9 +184,7 @@ class _MockExamDoState extends State<MockExamDo> {
                     source: widget.source,
                     userAnswers: userAnswers,
                     questions: questions,
-                  ),
-                ),
-              );
+                  )));
             }
           }
         });
@@ -244,15 +242,19 @@ class _MockExamDoState extends State<MockExamDo> {
 
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => MockResultScreen(
-                                    totalQuestions: questions.length,
-                                    correctAnswers: correctAnswers,
-                                    source: widget.source,
-                                    userAnswers: userAnswers,
-                                    questions: questions,
-                                  ),
-                                ),
+                                createFadeRoute(MockResultScreen(
+                                  totalQuestions: questions.length,
+                                  correctAnswers: userAnswers
+                                      .asMap()
+                                      .entries
+                                      .where((entry) =>
+                                          entry.value ==
+                                          questions[entry.key]['correctAnswer'])
+                                      .length,
+                                  source: widget.source,
+                                  userAnswers: userAnswers,
+                                  questions: questions,
+                                )),
                               );
                             },
                           ),

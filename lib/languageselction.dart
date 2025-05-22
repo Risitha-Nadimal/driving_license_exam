@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/backbutton.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/mockexam.dart';
 import 'package:flutter/material.dart';
 
@@ -98,12 +99,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => MockExamDo(
-                              selectedLanguage: selectedLanguage,
-                              source: widget.source,
-                            ),
-                          ),
+                          createFadeRoute(MockExamDo(
+                            selectedLanguage: selectedLanguage,
+                            source: widget.source,
+                          )),
                         );
                         print(
                             "Starting exam in $selectedLanguage from ${widget.source}");

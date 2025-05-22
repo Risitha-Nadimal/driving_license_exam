@@ -1,4 +1,5 @@
 import 'package:driving_license_exam/component/appbar.dart';
+import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/editprofile.dart';
 import 'package:driving_license_exam/premium.dart';
 import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
@@ -34,10 +35,7 @@ class ProfileScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.red),
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                Navigator.push(context, createFadeRoute(const LoginScreen()));
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -145,10 +143,8 @@ class ProfileScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return const Editprofile();
-                          }));
+                          Navigator.push(
+                              context, createFadeRoute(const Editprofile()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFEBF6FF),
@@ -221,10 +217,10 @@ class ProfileScreen extends StatelessWidget {
                               width: size.width,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const SubscriptionScreen();
-                                  }));
+                                  Navigator.push(
+                                      context,
+                                      createFadeRoute(
+                                          const SubscriptionScreen()));
                                 },
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xff219EBC)),
