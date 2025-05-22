@@ -165,7 +165,7 @@ class HomeContent extends StatelessWidget {
                           ],
                         ),
                         Spacer(),
-                        Icon(Icons.punch_clock_outlined, color: Colors.blue),
+                        Icon(Icons.alarm_on_rounded, color: Colors.blue),
                       ],
                     ),
                   ),

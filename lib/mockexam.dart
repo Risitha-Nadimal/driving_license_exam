@@ -2,6 +2,7 @@ import 'package:driving_license_exam/component/PreviousButton.dart';
 import 'package:driving_license_exam/component/nextbutton.dart';
 import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart'; // Import flutter_animate
 
 class MockExamDo extends StatefulWidget {
   final String source;
@@ -22,6 +23,7 @@ class _MockExamDoState extends State<MockExamDo> {
   List<int> userAnswers = [];
   late List<Map<String, dynamic>> questions;
   bool showAnswer = false;
+  bool _triggerAnimation = false; // To trigger animation
 
   @override
   void initState() {
@@ -32,7 +34,6 @@ class _MockExamDoState extends State<MockExamDo> {
 
   void _initializeQuestions() {
     questions = [
-      // English questions
       if (widget.selectedLanguage == 'English') ...[
         {
           'question': 'What does this traffic sign indicate?',
@@ -70,7 +71,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'correctAnswer': 1,
         },
       ],
-      // Sinhala questions
       if (widget.selectedLanguage == 'Sinhala') ...[
         {
           'question': 'මෙම ගමනාගමන සංඥාවෙන් දැක්වෙන්නේ කුමක්ද?',
@@ -107,7 +107,6 @@ class _MockExamDoState extends State<MockExamDo> {
           'correctAnswer': 1,
         },
       ],
-      // Tamil questions
       if (widget.selectedLanguage == 'Tamil') ...[
         {
           'question': 'இந்த போக்குவரத்து அடையாளம் எதைக் குறிக்கிறது?',
@@ -149,129 +148,134 @@ class _MockExamDoState extends State<MockExamDo> {
   }
 
   void _goToNextQuestion() {
-    if (widget.source == 'StudyMaterials') {
-      setState(() {
-        if (!showAnswer) {
-          // First click: Show the correct answer
-          showAnswer = true;
-        } else {
-          // Second click: Move to the next question
-          userAnswers[currentQuestionIndex] = selectedAnswer;
-          if (currentQuestionIndex < questions.length - 1) {
-            currentQuestionIndex++;
-            selectedAnswer = userAnswers[currentQuestionIndex];
-            showAnswer = false; // Reset for the next question
-          } else {
-            // Handle the last question (you can add logic to end the study session)
-            showAnswer = false;
-            // Optionally navigate to a result screen or reset
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MockResultScreen(
-                  totalQuestions: questions.length,
-                  correctAnswers: userAnswers
-                      .asMap()
-                      .entries
-                      .where((entry) =>
-                          entry.value == questions[entry.key]['correctAnswer'])
-                      .length,
-                  source: widget.source,
-                  userAnswers: userAnswers,
-                  questions: questions,
-                ),
-              ),
-            );
-          }
-        }
-      });
-    } else {
-      // Existing MockExam logic
-      if (currentQuestionIndex < questions.length - 1) {
+    // Trigger animation by toggling the flag
+    setState(() {
+      //_triggerAnimation = !_triggerAnimation;
+    });
+
+    // Delay the state update until after the animation
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (widget.source == 'StudyMaterials') {
         setState(() {
-          userAnswers[currentQuestionIndex] = selectedAnswer;
-          currentQuestionIndex++;
-          selectedAnswer = userAnswers[currentQuestionIndex];
+          if (!showAnswer) {
+            // First click: Show the correct answer
+            showAnswer = true;
+          } else {
+            // Second click: Move to the next question
+            userAnswers[currentQuestionIndex] = selectedAnswer;
+            if (currentQuestionIndex < questions.length - 1) {
+              currentQuestionIndex++;
+              selectedAnswer = userAnswers[currentQuestionIndex];
+              showAnswer = false;
+            } else {
+              showAnswer = false;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MockResultScreen(
+                    totalQuestions: questions.length,
+                    correctAnswers: userAnswers
+                        .asMap()
+                        .entries
+                        .where((entry) =>
+                            entry.value ==
+                            questions[entry.key]['correctAnswer'])
+                        .length,
+                    source: widget.source,
+                    userAnswers: userAnswers,
+                    questions: questions,
+                  ),
+                ),
+              );
+            }
+          }
         });
       } else {
-        // Show confirmation dialog for the last question
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Column(
-                children: [
-                  Image(
-                    image: AssetImage('assets/images/alert_exam.png'),
-                    height: 100,
-                  ),
-                  SizedBox(height: 26),
-                  Text("Attempt all answer"),
-                ],
-              ),
-              content:
-                  const Text("Are you sure you want to submit your answers?"),
-              actions: [
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xFF4378DB),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
-                        child: TextButton(
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white),
+        // MockExam logic
+        if (currentQuestionIndex < questions.length - 1) {
+          setState(() {
+            userAnswers[currentQuestionIndex] = selectedAnswer;
+            currentQuestionIndex++;
+            selectedAnswer = userAnswers[currentQuestionIndex];
+          });
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Column(
+                  children: [
+                    Image(
+                      image: AssetImage('assets/images/alert_exam.png'),
+                      height: 100,
+                    ),
+                    SizedBox(height: 26),
+                    Text("Attempt all answer"),
+                  ],
+                ),
+                content:
+                    const Text("Are you sure you want to submit your answers?"),
+                actions: [
+                  Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF4378DB),
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                            // Calculate results
-                            int correctAnswers = 0;
-                            for (int i = 0; i < questions.length; i++) {
-                              if (userAnswers[i] ==
-                                  questions[i]['correctAnswer']) {
-                                correctAnswers++;
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 8),
+                          child: TextButton(
+                            child: const Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              int correctAnswers = 0;
+                              for (int i = 0; i < questions.length; i++) {
+                                if (userAnswers[i] ==
+                                    questions[i]['correctAnswer']) {
+                                  correctAnswers++;
+                                }
                               }
-                            }
 
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MockResultScreen(
-                                  totalQuestions: questions.length,
-                                  correctAnswers: correctAnswers,
-                                  source: widget.source,
-                                  userAnswers: userAnswers, // Pass userAnswers
-                                  questions: questions,
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MockResultScreen(
+                                    totalQuestions: questions.length,
+                                    correctAnswers: correctAnswers,
+                                    source: widget.source,
+                                    userAnswers: userAnswers,
+                                    questions: questions,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            },
+                          ),
+                        ),
+                        TextButton(
+                          child: const Text("Cancel",
+                              style: TextStyle(
+                                  color: Color(0xFF4378DB),
+                                  fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            Navigator.of(context).pop();
                           },
                         ),
-                      ),
-                      TextButton(
-                        child: const Text("Cancel",
-                            style: TextStyle(
-                                color: Color(0xFF4378DB),
-                                fontWeight: FontWeight.bold)),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
-        );
+                ],
+              );
+            },
+          );
+        }
       }
-    }
+    });
   }
 
   void _goToPreviousQuestion() {
@@ -280,6 +284,8 @@ class _MockExamDoState extends State<MockExamDo> {
         userAnswers[currentQuestionIndex] = selectedAnswer;
         currentQuestionIndex--;
         selectedAnswer = userAnswers[currentQuestionIndex];
+        _triggerAnimation =
+            !_triggerAnimation; // Trigger animation for previous
       });
     }
   }
@@ -298,7 +304,7 @@ class _MockExamDoState extends State<MockExamDo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Timer & Progress
+              // Timer & Progress (no animation here)
               Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -346,8 +352,10 @@ class _MockExamDoState extends State<MockExamDo> {
 
               const SizedBox(height: 24),
 
-              // Question & Image
+              // Question & Image with Animation
               Container(
+                key: ValueKey(
+                    'question-$currentQuestionIndex-$_triggerAnimation'),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                 decoration: BoxDecoration(
@@ -390,13 +398,32 @@ class _MockExamDoState extends State<MockExamDo> {
                     const SizedBox(height: 12),
                   ],
                 ),
+              ).animate(
+                key: ValueKey(
+                    'question-$currentQuestionIndex-$_triggerAnimation'),
+                effects: [
+                  FadeEffect(
+                    duration: 300.ms,
+                    begin: 0.0,
+                    end: 1.0,
+                    curve: Curves.easeInOut,
+                  ),
+                  SlideEffect(
+                    duration: 300.ms,
+                    begin: const Offset(0, -0.1),
+                    end: const Offset(0, 0),
+                    curve: Curves.easeInOut,
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),
 
-              // Answers
+              // Answers with Animation
               Expanded(
                 child: ListView.builder(
+                  key: ValueKey(
+                      'answers-$currentQuestionIndex-$_triggerAnimation'),
                   itemCount: currentQuestion['answers'].length,
                   itemBuilder: (context, index) {
                     bool isCorrect = index == currentQuestion['correctAnswer'];
@@ -450,6 +477,23 @@ class _MockExamDoState extends State<MockExamDo> {
                       ),
                     );
                   },
+                ).animate(
+                  key: ValueKey(
+                      'answers-$currentQuestionIndex-$_triggerAnimation'),
+                  effects: [
+                    FadeEffect(
+                      duration: 300.ms,
+                      begin: 0.0,
+                      end: 1.0,
+                      curve: Curves.easeInOut,
+                    ),
+                    SlideEffect(
+                      duration: 300.ms,
+                      begin: const Offset(0, -0.1),
+                      end: const Offset(0, 0),
+                      curve: Curves.easeInOut,
+                    ),
+                  ],
                 ),
               ),
 

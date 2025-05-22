@@ -24,7 +24,8 @@ class MockResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     int wrongAnswers = totalQuestions - correctAnswers;
-    bool isPassed = correctAnswers >= 35;
+    final percentage = (correctAnswers / totalQuestions) * 100;
+    bool isPassed = percentage >= 65;
 
     String heading;
     Color bgcolor;
