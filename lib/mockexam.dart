@@ -1,9 +1,11 @@
+import 'dart:async'; // Import for Timer
+
 import 'package:driving_license_exam/component/PreviousButton.dart';
 import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/component/nextbutton.dart';
 import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart'; // Import flutter_animate
+import 'package:flutter_animate/flutter_animate.dart';
 
 class MockExamDo extends StatefulWidget {
   final String source;
@@ -24,13 +26,19 @@ class _MockExamDoState extends State<MockExamDo> {
   List<int> userAnswers = [];
   late List<Map<String, dynamic>> questions;
   bool showAnswer = false;
-  bool _triggerAnimation = false; // To trigger animation
+  bool _triggerAnimation = false;
+
+  // Timer-related variables
+  late Timer _timer;
+  int _remainingSeconds = 1 * 60 + 25; // 49 minutes and 25 seconds in seconds
+  bool _isTimeUp = false;
 
   @override
   void initState() {
     super.initState();
     _initializeQuestions();
     userAnswers = List.filled(questions.length, -1);
+    _startTimer();
   }
 
   void _initializeQuestions() {
@@ -148,21 +156,62 @@ class _MockExamDoState extends State<MockExamDo> {
     ];
   }
 
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds <= 0) {
+        timer.cancel();
+        setState(() {
+          _isTimeUp = true;
+        });
+        _navigateToResultScreen();
+      } else {
+        setState(() {
+          _remainingSeconds--;
+        });
+      }
+    });
+  }
+
+  void _navigateToResultScreen() {
+    // Save the current answer before navigating
+    if (selectedAnswer != -1) {
+      userAnswers[currentQuestionIndex] = selectedAnswer;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      createFadeRoute(MockResultScreen(
+        totalQuestions: questions.length,
+        correctAnswers: userAnswers
+            .asMap()
+            .entries
+            .where(
+                (entry) => entry.value == questions[entry.key]['correctAnswer'])
+            .length,
+        source: widget.source,
+        userAnswers: userAnswers,
+        questions: questions,
+      )),
+    );
+  }
+
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
+  }
+
   void _goToNextQuestion() {
-    // Trigger animation by toggling the flag
     setState(() {
-      //_triggerAnimation = !_triggerAnimation;
+      //  _triggerAnimation = !_triggerAnimation;
     });
 
-    // Delay the state update until after the animation
     Future.delayed(const Duration(milliseconds: 300), () {
       if (widget.source == 'StudyMaterials') {
         setState(() {
           if (!showAnswer) {
-            // First click: Show the correct answer
             showAnswer = true;
           } else {
-            // Second click: Move to the next question
             userAnswers[currentQuestionIndex] = selectedAnswer;
             if (currentQuestionIndex < questions.length - 1) {
               currentQuestionIndex++;
@@ -170,26 +219,11 @@ class _MockExamDoState extends State<MockExamDo> {
               showAnswer = false;
             } else {
               showAnswer = false;
-              Navigator.pushReplacement(
-                  context,
-                  createFadeRoute(MockResultScreen(
-                    totalQuestions: questions.length,
-                    correctAnswers: userAnswers
-                        .asMap()
-                        .entries
-                        .where((entry) =>
-                            entry.value ==
-                            questions[entry.key]['correctAnswer'])
-                        .length,
-                    source: widget.source,
-                    userAnswers: userAnswers,
-                    questions: questions,
-                  )));
+              _navigateToResultScreen();
             }
           }
         });
       } else {
-        // MockExam logic
         if (currentQuestionIndex < questions.length - 1) {
           setState(() {
             userAnswers[currentQuestionIndex] = selectedAnswer;
@@ -232,30 +266,7 @@ class _MockExamDoState extends State<MockExamDo> {
                             ),
                             onPressed: () {
                               Navigator.of(context).pop();
-                              int correctAnswers = 0;
-                              for (int i = 0; i < questions.length; i++) {
-                                if (userAnswers[i] ==
-                                    questions[i]['correctAnswer']) {
-                                  correctAnswers++;
-                                }
-                              }
-
-                              Navigator.pushReplacement(
-                                context,
-                                createFadeRoute(MockResultScreen(
-                                  totalQuestions: questions.length,
-                                  correctAnswers: userAnswers
-                                      .asMap()
-                                      .entries
-                                      .where((entry) =>
-                                          entry.value ==
-                                          questions[entry.key]['correctAnswer'])
-                                      .length,
-                                  source: widget.source,
-                                  userAnswers: userAnswers,
-                                  questions: questions,
-                                )),
-                              );
+                              _navigateToResultScreen();
                             },
                           ),
                         ),
@@ -286,10 +297,15 @@ class _MockExamDoState extends State<MockExamDo> {
         userAnswers[currentQuestionIndex] = selectedAnswer;
         currentQuestionIndex--;
         selectedAnswer = userAnswers[currentQuestionIndex];
-        _triggerAnimation =
-            !_triggerAnimation; // Trigger animation for previous
+        _triggerAnimation = !_triggerAnimation;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer to prevent memory leaks
+    super.dispose();
   }
 
   @override
@@ -306,7 +322,6 @@ class _MockExamDoState extends State<MockExamDo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Timer & Progress (no animation here)
               Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -315,19 +330,21 @@ class _MockExamDoState extends State<MockExamDo> {
                 ),
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.access_time,
+                        const Icon(Icons.access_time,
                             color: Colors.white70, size: 18),
-                        SizedBox(width: 6),
-                        Text("Time Remaining :",
+                        const SizedBox(width: 6),
+                        const Text("Time Remaining :",
                             style:
                                 TextStyle(color: Color.fromARGB(179, 0, 0, 0))),
-                        Spacer(),
-                        Text("49:25",
-                            style: TextStyle(
-                                color: Color(0xFF219EBC),
-                                fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        Text(
+                          _formatTime(_remainingSeconds),
+                          style: const TextStyle(
+                              color: Color(0xFF219EBC),
+                              fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -351,10 +368,7 @@ class _MockExamDoState extends State<MockExamDo> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // Question & Image with Animation
               Container(
                 key: ValueKey(
                     'question-$currentQuestionIndex-$_triggerAnimation'),
@@ -418,10 +432,7 @@ class _MockExamDoState extends State<MockExamDo> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 24),
-
-              // Answers with Animation
               Expanded(
                 child: ListView.builder(
                   key: ValueKey(
@@ -498,8 +509,6 @@ class _MockExamDoState extends State<MockExamDo> {
                   ],
                 ),
               ),
-
-              // Navigation buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
