@@ -6,6 +6,7 @@ import 'package:driving_license_exam/component/nextbutton.dart';
 import 'package:driving_license_exam/mock_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:just_audio/just_audio.dart';
 
 class MockExamDo extends StatefulWidget {
   final String source;
@@ -30,8 +31,10 @@ class _MockExamDoState extends State<MockExamDo> {
 
   // Timer-related variables
   late Timer _timer;
-  int _remainingSeconds = 1 * 60 + 25; // 49 minutes and 25 seconds in seconds
+  int _remainingSeconds = 60 * 60; // 49 minutes and 25 seconds in seconds
   bool _isTimeUp = false;
+
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -39,6 +42,7 @@ class _MockExamDoState extends State<MockExamDo> {
     _initializeQuestions();
     userAnswers = List.filled(questions.length, -1);
     _startTimer();
+    _initializeAudioPlayer();
   }
 
   void _initializeQuestions() {
@@ -47,6 +51,7 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'What does this traffic sign indicate?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/e1.mp3',
           'answers': [
             'Curve to right',
             'Joining a side road at right angles to the right',
@@ -59,6 +64,7 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'What should you do when approaching a red traffic light?',
           'image': 'assets/images/redligt.jpg',
+          'audio': 'assets/audio/e2.mp3',
           'answers': [
             'Speed up to cross quickly',
             'Come to a complete stop',
@@ -71,6 +77,7 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'What is the speed limit in urban areas unless otherwise posted?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/e3.mp3',
           'answers': [
             '40 km/h',
             '50 km/h',
@@ -84,6 +91,7 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'මෙම ගමනාගමන සංඥාවෙන් දැක්වෙන්නේ කුමක්ද?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/s1.mp3',
           'answers': [
             'දකුණට වක්‍රය',
             'දකුණට සෘජු කෝණවලින් පැත්තක මාර්ගයට එකතු වීම',
@@ -95,6 +103,7 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'රතු ගමනාගමන ආලෝකයකට ආසන්න වූ විට ඔබ කළ යුත්තේ කුමක්ද?',
           'image': 'assets/images/redligt.jpg',
+          'audio': 'assets/audio/s2.mp3',
           'answers': [
             'වේගයෙන් ඉක්මවා යාමට වේගය ඉහළ නංවන්න',
             'සම්පූර්ණයෙන් නවතින්න',
@@ -107,6 +116,7 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'වෙනත් ලෙස නියම කර නොමැති නම් නාගරික ප්‍රදේශවල වේග සීමාව කොපමණද?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/s3.mp3',
           'answers': [
             'පැයට කි.මී. 40',
             'පැයට කි.මී. 50',
@@ -120,6 +130,7 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question': 'இந்த போக்குவரத்து அடையாளம் எதைக் குறிக்கிறது?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/t1.mp3',
           'answers': [
             'வலதுபுறம் வளைவு',
             'வலதுபுறம் செங்கோணங்களில் ஒரு பக்க சாலையில் சேர்தல்',
@@ -132,6 +143,7 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'சிவப்பு போக்குவரத்து விளக்கை நெருங்கும்போது நீங்கள் என்ன செய்ய வேண்டும்?',
           'image': 'assets/images/redligt.jpg',
+          'audio': 'assets/audio/t2.mp3',
           'answers': [
             'விரைவாக கடக்க வேகத்தை அதிகரிக்கவும்',
             'முழுமையாக நிறுத்தவும்',
@@ -144,6 +156,7 @@ class _MockExamDoState extends State<MockExamDo> {
           'question':
               'வேறுவிதமாக குறிப்பிடப்படாவிட்டால் நகர்ப்புற பகுதிகளில் வேக வரம்பு என்ன?',
           'image': 'assets/images/exam.png',
+          'audio': 'assets/audio/t3.mp3',
           'answers': [
             'மணிக்கு 40 கி.மீ',
             'மணிக்கு 50 கி.மீ',
@@ -154,6 +167,32 @@ class _MockExamDoState extends State<MockExamDo> {
         },
       ],
     ];
+  }
+
+  void _initializeAudioPlayer() {
+    _audioPlayer = AudioPlayer();
+    _loadCurrentQuestionAudio();
+  }
+
+  Future<void> _loadCurrentQuestionAudio() async {
+    try {
+      await _audioPlayer.stop();
+      await _audioPlayer.setAsset(questions[currentQuestionIndex]['audio']);
+    } catch (e) {
+      print("Error loading audio: $e");
+    }
+  }
+
+  void _toggleAudio() async {
+    if (_audioPlayer.playing) {
+      await _audioPlayer.pause();
+    } else {
+      if (_audioPlayer.duration == null) {
+        await _loadCurrentQuestionAudio();
+      }
+      await _audioPlayer.play();
+    }
+    setState(() {}); // Refresh UI to update icon
   }
 
   void _startTimer() {
@@ -204,6 +243,9 @@ class _MockExamDoState extends State<MockExamDo> {
   void _goToNextQuestion() {
     setState(() {
       //  _triggerAnimation = !_triggerAnimation;
+      if (_audioPlayer.playing) {
+        _audioPlayer.pause();
+      }
     });
 
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -217,6 +259,7 @@ class _MockExamDoState extends State<MockExamDo> {
               currentQuestionIndex++;
               selectedAnswer = userAnswers[currentQuestionIndex];
               showAnswer = false;
+              _loadCurrentQuestionAudio();
             } else {
               showAnswer = false;
               _navigateToResultScreen();
@@ -229,6 +272,7 @@ class _MockExamDoState extends State<MockExamDo> {
             userAnswers[currentQuestionIndex] = selectedAnswer;
             currentQuestionIndex++;
             selectedAnswer = userAnswers[currentQuestionIndex];
+            _loadCurrentQuestionAudio();
           });
         } else {
           showDialog(
@@ -293,10 +337,14 @@ class _MockExamDoState extends State<MockExamDo> {
 
   void _goToPreviousQuestion() {
     if (currentQuestionIndex > 0) {
+      if (_audioPlayer.playing) {
+        _audioPlayer.pause();
+      }
       setState(() {
         userAnswers[currentQuestionIndex] = selectedAnswer;
         currentQuestionIndex--;
         selectedAnswer = userAnswers[currentQuestionIndex];
+        _loadCurrentQuestionAudio();
         _triggerAnimation = !_triggerAnimation;
       });
     }
@@ -306,6 +354,7 @@ class _MockExamDoState extends State<MockExamDo> {
   void dispose() {
     _timer.cancel(); // Cancel the timer to prevent memory leaks
     super.dispose();
+    _audioPlayer.dispose();
   }
 
   @override
@@ -333,7 +382,7 @@ class _MockExamDoState extends State<MockExamDo> {
                     Row(
                       children: [
                         const Icon(Icons.access_time,
-                            color: Colors.white70, size: 18),
+                            color: Color.fromARGB(179, 8, 0, 0), size: 18),
                         const SizedBox(width: 6),
                         const Text("Time Remaining :",
                             style:
@@ -387,8 +436,12 @@ class _MockExamDoState extends State<MockExamDo> {
                           Align(
                             alignment: Alignment.topRight,
                             child: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.volume_up_rounded)),
+                                onPressed: _toggleAudio,
+                                icon: Icon(
+                                  _audioPlayer.playing
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                )),
                           ),
                           Text(currentQuestion['question'],
                               style: const TextStyle(

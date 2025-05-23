@@ -15,8 +15,10 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  late AnimationController _animationController;
+  Animation<double>? _fadeAnimation;
 
   // List of screens to display for each tab
   final List<Widget> _screens = [
@@ -28,16 +30,49 @@ class _HomeState extends State<Home> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize animation controller
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300), // Animation duration
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    )..addListener(() {
+        setState(() {}); // Trigger rebuild when animation value changes
+      });
+    // Start the animation
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    if (_currentIndex != index) {
+      setState(() {
+        _currentIndex = index;
+      });
+      // Reset and replay animation on tab change
+      _animationController.reset();
+      _animationController.forward();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onTap: _onTabTapped,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xff219EBC),
         unselectedItemColor: Colors.grey,
@@ -50,7 +85,13 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
-      body: _screens[_currentIndex], // Display the current screen
+      body: FadeTransition(
+        opacity: _fadeAnimation!,
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+      ), // Display the current screen
     );
   }
 }
