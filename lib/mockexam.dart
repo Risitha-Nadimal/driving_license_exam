@@ -115,7 +115,7 @@ class _MockExamDoState extends State<MockExamDo> {
         {
           'question':
               'වෙනත් ලෙස නියම කර නොමැති නම් නාගරික ප්‍රදේශවල වේග සීමාව කොපමණද?',
-          'image': 'assets/images/exam.png',
+          'image': null,
           'audio': 'assets/audio/s3.mp3',
           'answers': [
             'පැයට කි.මී. 40',

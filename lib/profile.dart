@@ -1,7 +1,6 @@
 import 'package:driving_license_exam/component/appbar.dart';
 import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/editprofile.dart';
-import 'package:driving_license_exam/premium.dart';
 import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
 import 'package:flutter/material.dart';
 
@@ -212,30 +211,30 @@ class ProfileScreen extends StatelessWidget {
                                   color: Colors.green),
                               title: Text('Personalized study plan'),
                             ),
-                            const SizedBox(height: 10),
+                            // const SizedBox(height: 10),
                             SizedBox(
                               width: size.width,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      createFadeRoute(
-                                          const SubscriptionScreen()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xff219EBC)),
-                                child: const Text('Manage Subscription',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white)),
-                              ),
+                              // child: ElevatedButton(
+                              //   onPressed: () {
+                              //     Navigator.push(
+                              //         context,
+                              //         createFadeRoute(
+                              //             const SubscriptionScreen()));
+                              //   },
+                              //   style: ElevatedButton.styleFrom(
+                              //       backgroundColor: const Color(0xff219EBC)),
+                              //   child: const Text('Manage Subscription',
+                              //       style: TextStyle(
+                              //           fontWeight: FontWeight.bold,
+                              //           color: Colors.white)),
+                              // ),
                             ),
                           ],
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     SizedBox(
                       width: size.width,
                       child: ElevatedButton(
