@@ -1,4 +1,4 @@
-import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
+import 'package:driving_license_exam/screen/login/login.dart';
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
