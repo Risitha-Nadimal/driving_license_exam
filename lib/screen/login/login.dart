@@ -1,6 +1,6 @@
 import 'package:driving_license_exam/component/custom_clippers.dart';
 import 'package:driving_license_exam/home.dart';
-import 'package:driving_license_exam/screen/login/signup/splash/signup.dart';
+import 'package:driving_license_exam/screen/signup/signup.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

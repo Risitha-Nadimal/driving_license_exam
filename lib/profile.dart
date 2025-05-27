@@ -1,7 +1,7 @@
 import 'package:driving_license_exam/component/appbar.dart';
 import 'package:driving_license_exam/component/custompageroute.dart';
 import 'package:driving_license_exam/editprofile.dart';
-import 'package:driving_license_exam/screen/login/signup/splash/login.dart';
+import 'package:driving_license_exam/screen/login/login.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
