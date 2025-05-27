@@ -18,11 +18,22 @@ class ApiService {
 class StorageService {
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'user_data';
+  static const String _userid = 'user_id';
   static const String _currentExamKey = 'current_exam';
 
   static Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);
+  }
+
+  static Future<void> saveID(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userid, id);
+  }
+
+  static Future<String?> getID() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userid);
   }
 
   static Future<String?> getToken() async {

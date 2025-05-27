@@ -3,6 +3,10 @@ import 'package:driving_license_exam/home.dart';
 import 'package:driving_license_exam/screen/signup/signup.dart';
 import 'package:flutter/material.dart';
 
+import '../../component/api_error_handler.dart';
+import '../../services/api_service.dart';
+import '../../services/auth_service.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -15,12 +19,49 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final response = await AuthService.login(
+            email: _emailController.text, password: _passwordController.text);
+        // If successful, navigate to the home screen
+        if (response.success && response.data != null) {
+          await StorageService.saveID(response.data!.user.id);
+
+          ApiErrorHandler.showSuccess(context, 'Account created successfully!');
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const Home()),
+          );
+        } else {
+          ApiErrorHandler.showError(
+              context,
+              response.message.isNotEmpty
+                  ? response.message
+                  : 'Failed to login');
+        }
+      } catch (e) {
+        ApiErrorHandler.showError(context, ApiErrorHandler.getErrorMessage(e));
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -163,27 +204,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: size.width * 0.4,
                         height: size.height * 0.06,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const Home(),
-                                ),
-                              );
-                            }
-                          },
-                          label: const Row(
+                          onPressed: _login,
+                          label: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                'LOGIN',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Color.fromARGB(255, 255, 255, 255)),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(
+                              _isLoading
+                                  ? const CircularProgressIndicator()
+                                  : const Text(
+                                      'LOGIN',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255)),
+                                    ),
+                              const SizedBox(width: 8),
+                              const Icon(
                                 Icons.arrow_forward,
                                 color: Colors.white,
                               ),

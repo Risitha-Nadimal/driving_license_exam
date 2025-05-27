@@ -6,6 +6,8 @@ import 'package:driving_license_exam/profile.dart';
 import 'package:driving_license_exam/studymaterial.dart';
 import 'package:flutter/material.dart';
 
+import 'services/api_service.dart';
+
 // Create placeholder screens for each tab (you should replace these with your actual screens)
 
 class Home extends StatefulWidget {
@@ -47,6 +49,39 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       });
     // Start the animation
     _animationController.forward();
+
+    getUserData();
+  }
+
+  void getUserData() async {
+    try {
+      print('=== Getting User Data ===');
+
+      // Get user ID
+      final userId = await StorageService.getID();
+      print('User ID: ${userId ?? 'No ID found'}');
+
+      // Get user object
+      final user = await StorageService.getUser();
+      if (user != null) {
+        print('User Name: ${user.name}');
+        print('User Email: ${user.email}');
+        print('User DOB: ${user.dateOfBirth}');
+        print('Full User Object: $user');
+      } else {
+        print('No user data found in storage');
+      }
+
+      // Check authentication status
+      final token = await StorageService.getToken();
+      final isLoggedIn = await StorageService.isLoggedIn();
+      print('Has Token: ${token != null}');
+      print('Is Logged In: $isLoggedIn');
+
+      print('========================');
+    } catch (e) {
+      print('Error getting user data: $e');
+    }
   }
 
   @override
