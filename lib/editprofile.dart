@@ -10,6 +10,27 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
+  final TextEditingController _nameController =
+      TextEditingController(text: 'Malithi Imasha');
+  final TextEditingController _emailController =
+      TextEditingController(text: 'malithiimasha@gmail.com');
+  final TextEditingController _dobController =
+      TextEditingController(text: 'May 10, 2000');
+
+  // Flags to toggle edit mode
+  bool _isEditingName = false;
+  bool _isEditingEmail = false;
+  bool _isEditingDob = false;
+
+  @override
+  void dispose() {
+    // Dispose controllers to prevent memory leaks
+    _nameController.dispose();
+    _emailController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -85,62 +106,137 @@ class _EditprofileState extends State<Editprofile> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Personal Information',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18)),
+                            const Text(
+                              'Personal Information',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
                             const SizedBox(height: 10),
-                            const Text('Full name:',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                            // Full Name Field
+                            const Text(
+                              'Full name:',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Malithi Imasha',
-                                    style: TextStyle(fontSize: 15)),
+                                Expanded(
+                                  child: _isEditingName
+                                      ? TextField(
+                                          controller: _nameController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 8),
+                                          ),
+                                          style: const TextStyle(fontSize: 15),
+                                        )
+                                      : Text(
+                                          _nameController.text,
+                                          style: const TextStyle(fontSize: 15),
+                                        ),
+                                ),
                                 IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                  ),
+                                  icon: Icon(_isEditingName
+                                      ? Icons.check
+                                      : Icons.edit),
                                   onPressed: () {
-                                    // ...
+                                    setState(() {
+                                      if (_isEditingName) {
+                                        // Save changes (you can add validation or API call here)
+                                      }
+                                      _isEditingName = !_isEditingName;
+                                    });
                                   },
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            const Text('Email address:',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                            // Email Address Field
+                            const Text(
+                              'Email address:',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('malithiimasha@gmail.com',
-                                    style: TextStyle(fontSize: 15)),
+                                Expanded(
+                                  child: _isEditingEmail
+                                      ? TextField(
+                                          controller: _emailController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 8),
+                                          ),
+                                          style: const TextStyle(fontSize: 15),
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                        )
+                                      : Text(
+                                          _emailController.text,
+                                          style: const TextStyle(fontSize: 15),
+                                        ),
+                                ),
                                 IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                  ),
+                                  icon: Icon(_isEditingEmail
+                                      ? Icons.check
+                                      : Icons.edit),
                                   onPressed: () {
-                                    // ...
+                                    setState(() {
+                                      if (_isEditingEmail) {
+                                        // Save changes (you can add validation or API call here)
+                                      }
+                                      _isEditingEmail = !_isEditingEmail;
+                                    });
                                   },
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            const Text('Date of birth:',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                            // Date of Birth Field
+                            const Text(
+                              'Date of birth:',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('May 10, 2000',
-                                    style: TextStyle(fontSize: 15)),
+                                Expanded(
+                                  child: _isEditingDob
+                                      ? TextField(
+                                          controller: _dobController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 8),
+                                          ),
+                                          style: const TextStyle(fontSize: 15),
+                                        )
+                                      : Text(
+                                          _dobController.text,
+                                          style: const TextStyle(fontSize: 15),
+                                        ),
+                                ),
                                 IconButton(
-                                  icon: const Icon(
-                                    Icons.edit_calendar,
-                                  ),
+                                  icon: Icon(_isEditingDob
+                                      ? Icons.check
+                                      : Icons.edit_calendar),
                                   onPressed: () {
-                                    // ...
+                                    setState(() {
+                                      if (_isEditingDob) {
+                                        // Save changes (you can add validation or API call here)
+                                      }
+                                      _isEditingDob = !_isEditingDob;
+                                    });
                                   },
                                 ),
                               ],
@@ -155,7 +251,13 @@ class _EditprofileState extends State<Editprofile> {
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _isEditingName = false;
+                            _isEditingEmail = false;
+                            _isEditingDob = false;
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFEBF6FF),
                           foregroundColor: Colors.black,
